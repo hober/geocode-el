@@ -22,17 +22,28 @@
 
 ;;; Commentary:
 
-;; Emacs client library to the http://geocoder.us/ API.
-;;
-;; Requires csv.el, which lives here:
-;;             http://ulf.epplejasper.de/downloads/csv.el
+;; This is my initial, very rough cut of an Elisp API client for
+;; [geocoder.us][]. Depends on Ulf Jasper's [csv.el][]. A simple `make
+;; csv.el` should fetch it for you.
+
+;; This code has one entry point, `geocode`, which takes an address.
+
+;; [geocoder.us]:     http://geocoder.us/
+;; [csv.el]:          http://ulf.epplejasper.de/downloads/csv.el
+;; [hober/md-readme]: http://github.com/hober/md-readme
+
+;;; History:
+;; 2009-11-16: Initial release.
+;; 2009-11-17: Clean things up a bit. Checkdoc.
+;; 2009-11-17: Adopt [hober/md-readme][] for README.md generation.
 
 ;;; Code:
 
 (require 'csv)
 (require 'url)
 
-(defvar geocode-debug nil)
+(defvar geocode-debug nil
+  "If non-null, keep old response buffers for debugging purposes.")
 
 (defun geocode (address)
   "Geocode ADDRESS.
@@ -43,6 +54,7 @@ Returns a plist containing the address' components and its lat/long."
             (url-hexify-string address)))))
 
 (defun geocode-parse-response (buffer)
+  "Parse the CSV from geocoder.us in BUFFER."
   (unwind-protect
       (with-current-buffer buffer
         (url-http-parse-response)
